@@ -49,7 +49,7 @@ python scripts/generate_sample_cases.py
 ## 环境要求
 
 - Docker Desktop（包含 Docker Compose）
-- 可用端口 `8000`、`27017`、`19530`、`9091`
+- 可用端口 `8000`、`27017`
 - 可调用的 OpenAI 兼容 Embedding 和聊天模型服务
 
 ## 启动
@@ -61,9 +61,9 @@ Copy-Item .env.example .env
 docker compose up --build
 ```
 
-首次启动后配置 `.env` 中的 Embedding/聊天模型地址、模型名和 API Key。向量维度须与 Embedding 模型输出一致；下面示例默认 `1024`。
+首次启动前复制 `.env.example` 为 `.env`，配置 Embedding/聊天模型地址、模型名和 API Key。向量维度须与 Embedding 模型输出一致；示例默认 `1024`。Compose 中的 API 容器使用 Milvus Lite，`.db` 文件持久化在 `milvus_data` volume，无需额外的 Milvus、etcd 或 MinIO 服务。
 
-启动 Milvus、MongoDB 与 API 后，先导入合成知识：
+启动 MongoDB 与 API 后，先导入合成知识：
 
 ```powershell
 python scripts/ingest_knowledge.py
@@ -75,7 +75,7 @@ Docker API 容器也包含导入脚本；可用以下命令在容器内导入：
 docker compose exec agent-api python scripts/ingest_knowledge.py
 ```
 
-首次导入需调用 Embedding 服务对 700 条样例向量化。修改语料后再次运行会按稳定 ID upsert。
+首次导入需调用 Embedding 服务对 700 条样例向量化。修改语料后再次运行会按稳定 ID upsert。直接在本机运行时，Milvus Lite 默认将数据写入 `data/milvus_lite.db`；Docker Compose 则写入持久化 volume。Lite 同一数据目录由单个进程持有；重新导入时先停止 API 服务，导入完成后再启动。
 
 启动后打开：
 
@@ -149,9 +149,9 @@ Invoke-RestMethod -Method Post -Uri http://localhost:8000/api/analysis `
 - `EMBEDDING_BASE_URL`、`EMBEDDING_API_KEY`、`EMBEDDING_MODEL`：向量模型的 OpenAI 兼容接口。
 - `EMBEDDING_DIMENSION`：模型输出维度，必须与 Milvus collection 一致。
 - `LLM_BASE_URL`、`LLM_API_KEY`、`LLM_MODEL`：问答聊天模型接口。
-- `MILVUS_COLLECTION`、`RAG_TOP_K`、`RAG_MIN_SCORE`：向量集合、召回条数和最低相似度。
+- `MILVUS_URI`、`MILVUS_COLLECTION`、`RAG_TOP_K`、`RAG_MIN_SCORE`：Lite 数据文件或远端 Milvus URI、向量集合、召回条数和最低相似度。Lite 示例值为 `./data/milvus_lite.db`。
 
-Embedding 和聊天服务可以是同一个提供方，也可以分开配置。Compose 中 API 容器通过服务名连接 MongoDB 和 Milvus；若直接在本机运行 Python，则需使用 `MONGODB_URI=mongodb://localhost:27017` 和 `MILVUS_URI=http://localhost:19530`。
+Embedding 和聊天服务可以是同一个提供方，也可以分开配置。Compose 中 API 容器通过服务名连接 MongoDB，并使用 Milvus Lite 本地文件；直接在本机运行 Python 时，使用 `MONGODB_URI=mongodb://localhost:27017` 和 `MILVUS_URI=./data/milvus_lite.db`。需要切换到 Milvus Standalone 时，将 URI 改为 `http://主机:19530` 并按部署启用认证。
 
 本机直接运行的可选方式：
 
