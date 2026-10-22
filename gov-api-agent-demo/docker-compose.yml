@@ -1,0 +1,32 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: gov-agent-demo-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  agent-api:
+    build: .
+    container_name: gov-agent-demo-api
+    restart: unless-stopped
+    environment:
+      APP_NAME: ${APP_NAME:-政务 API 安全运营 Agent Demo}
+      MONGODB_URI: mongodb://mongo:27017
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-gov_api_agent_demo}
+      MONGODB_COLLECTION: ${MONGODB_COLLECTION:-agent_runs}
+    ports:
+      - "8000:8000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongo_data:
