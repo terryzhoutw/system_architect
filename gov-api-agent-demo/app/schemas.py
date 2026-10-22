@@ -17,3 +17,27 @@ class AnalysisResponse(BaseModel):
     prometheus_metrics: list[dict[str, Any]]
     application_logs: list[dict[str, Any]]
     report: dict[str, Any]
+
+
+class RAGAskRequest(BaseModel):
+    question: str = Field(min_length=2, max_length=2000)
+    user_id: str = Field(default="demo-user", max_length=100)
+    scenario_id: str | None = Field(default=None, max_length=64)
+    top_k: int | None = Field(default=None, ge=1, le=20)
+
+
+class RAGCitation(BaseModel):
+    index: int
+    id: str
+    title: str
+    source_name: str
+    source_version: str
+    scenario_id: str
+    score: float
+    snippet: str
+
+
+class RAGAskResponse(BaseModel):
+    run_id: str
+    answer: str
+    citations: list[RAGCitation]
