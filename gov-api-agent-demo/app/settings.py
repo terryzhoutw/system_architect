@@ -8,7 +8,7 @@ class Settings:
     mongodb_database: str = os.getenv("MONGODB_DATABASE", "gov_api_agent_demo")
     mongodb_collection: str = os.getenv("MONGODB_COLLECTION", "agent_runs")
     app_name: str = os.getenv("APP_NAME", "政务 API 安全运营 Agent Demo")
-    milvus_uri: str = os.getenv("MILVUS_URI", "http://localhost:19530")
+    milvus_uri: str = os.getenv("MILVUS_URI", "./data/milvus_lite.db")
     milvus_token: str = os.getenv("MILVUS_TOKEN", "")
     milvus_collection: str = os.getenv("MILVUS_COLLECTION", "gov_api_knowledge")
     embedding_base_url: str = os.getenv("EMBEDDING_BASE_URL", "")
