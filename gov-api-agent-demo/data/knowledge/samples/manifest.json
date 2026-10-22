@@ -1,0 +1,51 @@
+{
+  "dataset": "government-api-agent-synthetic-demo-v1",
+  "generated_at": "2026-10-22",
+  "synthetic": true,
+  "total_records": 700,
+  "scenarios": [
+    {
+      "scenario_id": "jwt_401",
+      "scenario_name": "401与SSO/JWT异常",
+      "count": 100,
+      "file": "jwt_401.jsonl"
+    },
+    {
+      "scenario_id": "traffic_spike",
+      "scenario_name": "API异常流量",
+      "count": 100,
+      "file": "traffic_spike.jsonl"
+    },
+    {
+      "scenario_id": "latency_5xx",
+      "scenario_name": "慢请求与5xx",
+      "count": 100,
+      "file": "latency_5xx.jsonl"
+    },
+    {
+      "scenario_id": "path_scan",
+      "scenario_name": "路径扫描与探测",
+      "count": 100,
+      "file": "path_scan.jsonl"
+    },
+    {
+      "scenario_id": "pii_exposure",
+      "scenario_name": "个人信息返回风险",
+      "count": 100,
+      "file": "pii_exposure.jsonl"
+    },
+    {
+      "scenario_id": "cert_expiry",
+      "scenario_name": "证书与密钥到期",
+      "count": 100,
+      "file": "cert_expiry.jsonl"
+    },
+    {
+      "scenario_id": "runbook_qa",
+      "scenario_name": "处置手册知识问答",
+      "count": 100,
+      "file": "runbook_qa.jsonl"
+    }
+  ],
+  "warning": "All records are generated examples, not production or government source data."
+}
